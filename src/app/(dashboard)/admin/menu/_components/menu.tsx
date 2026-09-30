@@ -12,12 +12,15 @@ import { useQuery } from "@tanstack/react-query";
 import { Pencil, Trash2 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
-import DialogCreateUser from "./dialog-create-user";
-import { profile } from "@/types/auth";
-import DialogUpdateUser from "./dialog-update-user";
-import DialogDeleteUser from "./dialog-delete-user";
+import { Menu } from "@/validations/menu-validation";
+import Image from "next/image";
+import { cn, convertIDR } from "@/lib/utils";
+import { HEADER_TABLE_MENU } from "@/constants/menu-constant";
+import DialogCreateMenu from "./dialog-create-menu";
+import DialogUpdateMenu from "./dialog-update-menu";
+import DialogDeleteMenu from "./dialog-delete-menu";
 
-export default function UserManagement() {
+export default function MenuManagement() {
   const supabase = createClient();
   const {
     currentPage,
@@ -28,21 +31,28 @@ export default function UserManagement() {
     handleChangeSearch,
   } = useDataTable();
   const {
-    data: users,
+    data: menus,
     isLoading,
     refetch,
   } = useQuery({
-    queryKey: ["users", currentPage, currentLimit, currentSearch],
+    queryKey: ["menus", currentPage, currentLimit, currentSearch],
     queryFn: async () => {
-      const result = await supabase
-        .from("profiles")
+      const query = supabase
+        .from("menus")
         .select("*", { count: "exact" })
         .range((currentPage - 1) * currentLimit, currentPage * currentLimit - 1)
-        .order("created_at")
-        .ilike("name", `%${currentSearch}%`);
+        .order("created_at");
+
+      if (currentSearch) {
+        query.or(
+          `name.ilike.%${currentSearch}%,category.ilike.%${currentSearch}`,
+        );
+      }
+
+      const result = await query;
 
       if (result.error)
-        toast.error("Get User data failed", {
+        toast.error("Get Menu data failed", {
           description: result.error.message,
         });
 
@@ -53,7 +63,7 @@ export default function UserManagement() {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
 
   const [selectedAction, setSelectedAction] = useState<{
-    data: profile;
+    data: Menu;
     type: "update" | "delete";
   } | null>(null);
 
@@ -62,12 +72,36 @@ export default function UserManagement() {
   };
 
   const filteredData = useMemo(() => {
-    return (users?.data || []).map((user, index) => {
+    return (menus?.data || []).map((menu: Menu, index) => {
       return [
         currentLimit * (currentPage - 1) + index + 1,
-        user.id,
-        user.name,
-        user.role,
+        <div className="flex items-center gap-2">
+          <Image
+            src={menu.image_url as string}
+            alt={menu.name}
+            width={40}
+            height={40}
+            className="rounded"
+          />
+          {menu.name}
+        </div>,
+        menu.category,
+        <div>
+          <p>Base: {convertIDR(menu.price)}</p>
+          <p>Discount: {menu.discount}</p>
+          <p>
+            After Discount: {""}
+            {convertIDR(menu.price - (menu.price * menu.discount) / 100)}
+          </p>
+        </div>,
+        <div
+          className={cn(
+            "px-2 py-1 rounded-full text-white w-fit",
+            menu.is_available ? "bg-green-600" : "bg-red-500",
+          )}
+        >
+          {menu.is_available ? "Available" : "Not Available"}
+        </div>,
         <DropdownAction
           menu={[
             {
@@ -79,7 +113,7 @@ export default function UserManagement() {
               ),
               action: () => {
                 setSelectedAction({
-                  data: user,
+                  data: menu,
                   type: "update",
                 });
               },
@@ -94,7 +128,7 @@ export default function UserManagement() {
               variant: "destructive",
               action: () => {
                 setSelectedAction({
-                  data: user,
+                  data: menu,
                   type: "delete",
                 });
               },
@@ -103,28 +137,28 @@ export default function UserManagement() {
         />,
       ];
     });
-  }, [users]);
+  }, [menus]);
 
   const totalPages = useMemo(() => {
-    return users && users.count !== null
-      ? Math.ceil(users.count / currentLimit)
+    return menus && menus.count !== null
+      ? Math.ceil(menus.count / currentLimit)
       : 0;
-  }, [users]);
+  }, [menus]);
 
   return (
     <div className="w-full">
       <div className="flex flex-col lg:flex-row mb-4 gap-2 justify-between w-full">
-        <h1 className="text-2xl font-bold">User Management</h1>
+        <h1 className="text-2xl font-bold">Menu Management</h1>
         <div className="flex gap-2">
           <Input
-            placeholder="Search by name"
+            placeholder="Search by name or category"
             onChange={(e) => handleChangeSearch(e.target.value)}
           />
           <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
             <DialogTrigger asChild>
               <Button variant="outline">Create</Button>
             </DialogTrigger>
-            <DialogCreateUser
+            <DialogCreateMenu
               refetch={refetch}
               setDialogOpen={setIsCreateOpen}
             />
@@ -132,7 +166,7 @@ export default function UserManagement() {
         </div>
       </div>
       <DataTable
-        header={HEADER_TABLE_USER}
+        header={HEADER_TABLE_MENU}
         data={filteredData}
         isLoading={isLoading}
         totalPages={totalPages}
@@ -141,13 +175,13 @@ export default function UserManagement() {
         onChangePage={handleChangePage}
         onChangeLimit={handleChangeLimit}
       />
-      <DialogUpdateUser
+      <DialogUpdateMenu
         open={selectedAction !== null && selectedAction.type === "update"}
         refetch={refetch}
         currentData={selectedAction?.data}
         handleChangeAction={handleChangeAction}
       />
-      <DialogDeleteUser
+      <DialogDeleteMenu
         open={selectedAction !== null && selectedAction.type === "delete"}
         refetch={refetch}
         currentData={selectedAction?.data}

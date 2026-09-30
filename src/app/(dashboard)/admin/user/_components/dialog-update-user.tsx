@@ -1,28 +1,28 @@
+import { INITIAL_STATE_UPDATE_USER } from "@/constants/auth-constant";
 import {
-  INITIAL_CREATE_USER_FORM,
-  INITIAL_STATE_CREATE_USER,
-  INITIAL_STATE_UPDATE_USER,
-} from "@/constants/auth-constant";
-import {
-  CreateUserForm,
-  createUserSchema,
   UpdateUserForm,
   updateUserSchema,
 } from "@/validations/auth-validation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { startTransition, useActionState, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { createUser } from "../action";
+import { updateUser } from "../action";
 import { toast } from "sonner";
 import { Preview } from "@/types/general";
 import FormUser from "./form-user";
+import { profile } from "@/types/auth";
+import { Dialog } from "@/components/ui/dialog";
 
 export default function DialogUpdateUser({
   refetch,
-  setDialogOpen,
+  open,
+  currentData,
+  handleChangeAction,
 }: {
   refetch: () => void;
-  setDialogOpen: (open: boolean) => void;
+  currentData?: profile;
+  open?: boolean;
+  handleChangeAction?: (open: boolean) => void;
 }) {
   const form = useForm<UpdateUserForm>({
     resolver: zodResolver(updateUserSchema),
@@ -35,41 +35,62 @@ export default function DialogUpdateUser({
 
   const onSubmit = form.handleSubmit(async (data) => {
     const formData = new FormData();
-    Object.entries(data).forEach(([key, value]) => {
-      formData.append(
-        key,
-        key === "avatar_url" ? (preview!.file ?? "") : value,
-      );
-    });
+    if (currentData?.avatar_url !== data.avatar_url) {
+      Object.entries(data).forEach(([key, value]) => {
+        formData.append(
+          key,
+          key === "avatar_url" ? (preview!.file ?? "") : value,
+        );
+      });
+      formData.append("old_avatar_url", currentData?.avatar_url ?? "");
+    } else {
+      Object.entries(data).forEach(([Key, value]) => {
+        formData.append(Key, value);
+      });
+    }
+    formData.append("id", currentData?.id ?? "");
 
     startTransition(() => {
-      createUserAction(formData);
+      updateUserAction(formData);
     });
   });
 
   useEffect(() => {
-    if (createUserState?.status === "error") {
-      toast.error("Create user Failed", {
-        description: createUserState.errors?._form?.[0],
+    if (updateUserState?.status === "error") {
+      toast.error("Update user Failed", {
+        description: updateUserState.errors?._form?.[0],
       });
     }
 
-    if (createUserState?.status === "success") {
-      toast.success("Create user Success");
+    if (updateUserState?.status === "success") {
+      toast.success("Update user Success");
       form.reset();
-      setPreview(undefined);
       refetch();
-      setDialogOpen(false);
+      handleChangeAction?.(false);
     }
-  }, [createUserState]);
+  }, [updateUserState]);
+
+  useEffect(() => {
+    if (currentData) {
+      form.setValue("name", currentData.name as string);
+      form.setValue("role", currentData.role as string);
+      form.setValue("avatar_url", currentData.avatar_url as string);
+      setPreview({
+        file: new File([], currentData.avatar_url as string),
+        displayUrl: currentData.avatar_url as string,
+      });
+    }
+  }, [currentData]);
   return (
-    <FormUser
-      form={form}
-      onSubmit={onSubmit}
-      isLoading={isPendingUpdateUser}
-      type="Create"
-      preview={preview}
-      setPreview={setPreview}
-    />
+    <Dialog open={open} onOpenChange={handleChangeAction}>
+      <FormUser
+        form={form}
+        onSubmit={onSubmit}
+        isLoading={isPendingUpdateUser}
+        type="Update"
+        preview={preview}
+        setPreview={setPreview}
+      />
+    </Dialog>
   );
 }
