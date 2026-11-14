@@ -92,8 +92,8 @@ export default function FormMenu<T extends FieldValues>({
           />
         </div>
         <DialogFooter>
-          <DialogClose asChild>
-            <Button variant="outline">Cancel</Button>
+          <DialogClose render={<Button variant="outline" />}>
+            Cancel
           </DialogClose>
           <Button type="submit">
             {isLoading ? <Loader2 className="animate-spin" /> : type}

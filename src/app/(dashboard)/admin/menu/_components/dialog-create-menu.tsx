@@ -3,7 +3,7 @@ import { startTransition, useActionState, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { Preview } from "@/types/general";
-import { createMenu } from "../action";
+import { createMenu } from "../actions";
 import { MenuForm, menuSchemaForm } from "@/validations/menu-validation";
 import { INITIAL_MENU, INITIAL_STATE_MENU } from "@/constants/menu-constant";
 import FormMenu from "./form-menu";

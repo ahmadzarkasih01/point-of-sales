@@ -6,7 +6,7 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { startTransition, useActionState, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { updateUser } from "../action";
+import { updateUser } from "../actions";
 import { toast } from "sonner";
 import { Preview } from "@/types/general";
 import FormUser from "./form-user";

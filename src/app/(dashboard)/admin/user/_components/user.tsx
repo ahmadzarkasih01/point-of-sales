@@ -72,7 +72,7 @@ export default function UserManagement() {
           menu={[
             {
               label: (
-                <span className="flex item-center gap-2">
+                <span className="flex items-center gap-2">
                   <Pencil />
                   Edit
                 </span>
@@ -86,7 +86,7 @@ export default function UserManagement() {
             },
             {
               label: (
-                <span className="flex item-center gap-2">
+                <span className="flex items-center gap-2">
                   <Trash2 className="text-red-400" />
                   Delete
                 </span>
@@ -121,8 +121,8 @@ export default function UserManagement() {
             onChange={(e) => handleChangeSearch(e.target.value)}
           />
           <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
-            <DialogTrigger asChild>
-              <Button variant="outline">Create</Button>
+            <DialogTrigger render={<Button variant="outline" />}>
+              Create
             </DialogTrigger>
             <DialogCreateUser
               refetch={refetch}

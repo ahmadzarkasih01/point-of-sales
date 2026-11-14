@@ -42,13 +42,14 @@ export default function AppSidebar() {
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton asChild size="lg">
-              <div className="flex items-center gap-2 font-semibold">
-                <div className="bg-teal-500 flex p-2 items-center justify-center rounded-md">
-                  <Coffee className="size-4" />
-                </div>
-                WPU Cafe
+            <SidebarMenuButton
+              size="lg"
+              render={<div className="flex items-center gap-2 font-semibold" />}
+            >
+              <div className="bg-teal-500 flex p-2 items-center justify-center rounded-md">
+                <Coffee className="size-4" />
               </div>
+              WPU Cafe
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
@@ -61,22 +62,25 @@ export default function AppSidebar() {
               {SIDEBAR_MENU_LIST[profile.role as SidebarMenuKey]?.map(
                 (item) => (
                   <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild tooltip={item.title}>
-                      <a
-                        href={item.url}
-                        className={cn(
-                          "flex items-center gap-3 px-4 py-2.5 h-auto w-full rounded-md transition-colors",
-                          {
-                            "bg-teal-500 text-white hover:bg-teal-600 hover:text-white":
-                              pathname === item.url,
-                            "text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground":
-                              pathname !== item.url,
-                          },
-                        )}
-                      >
-                        {item.icon && <item.icon className="size-5 shrink-0" />}
-                        <span className="truncate">{item.title}</span>
-                      </a>
+                    <SidebarMenuButton
+                      tooltip={item.title}
+                      render={
+                        <a
+                          href={item.url}
+                          className={cn(
+                            "flex items-center gap-3 px-4 py-2.5 h-auto w-full rounded-md transition-colors",
+                            {
+                              "bg-teal-500 text-white hover:bg-teal-600 hover:text-white":
+                                pathname === item.url,
+                              "text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground":
+                                pathname !== item.url,
+                            },
+                          )}
+                        />
+                      }
+                    >
+                      {item.icon && <item.icon className="size-5 shrink-0" />}
+                      <span className="truncate">{item.title}</span>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 ),
@@ -90,25 +94,28 @@ export default function AppSidebar() {
         <SidebarMenu>
           <SidebarMenuItem>
             <DropdownMenu>
-              <DropdownMenuTrigger asChild className="w-60">
-                <SidebarMenuButton
-                  size="lg"
-                  className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-                >
-                  <Avatar className="h-8 w-8 rounded-lg">
-                    <AvatarImage src={profile.avatar_url} alt={profile.name} />
-                    <AvatarFallback className="rounded-lg">
-                      {profile.name?.charAt(0)}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1 text-left leading-tight">
-                    <h4 className="truncate font-medium">{profile.name}</h4>
-                    <p className="text-muted-foreground truncate text-xs capitalize">
-                      {profile.role}
-                    </p>
-                  </div>
-                  <EllipsisVertical className="ml-auto size-4" />
-                </SidebarMenuButton>
+              <DropdownMenuTrigger
+                className="w-60"
+                render={
+                  <SidebarMenuButton
+                    size="lg"
+                    className="data-[popup-open]:bg-sidebar-accent data-[popup-open]:text-sidebar-accent-foreground"
+                  />
+                }
+              >
+                <Avatar className="h-8 w-8 rounded-lg">
+                  <AvatarImage src={profile.avatar_url} alt={profile.name} />
+                  <AvatarFallback className="rounded-lg">
+                    {profile.name?.charAt(0)}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="flex-1 text-left leading-tight">
+                  <h4 className="truncate font-medium">{profile.name}</h4>
+                  <p className="text-muted-foreground truncate text-xs capitalize">
+                    {profile.role}
+                  </p>
+                </div>
+                <EllipsisVertical className="ml-auto size-4" />
               </DropdownMenuTrigger>
               <DropdownMenuContent
                 className="min-w-56 rounded-lg"

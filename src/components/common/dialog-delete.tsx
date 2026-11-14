@@ -35,8 +35,8 @@ export default function DialogDelete({
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <DialogClose asChild>
-              <Button variant="outline">Cancel</Button>
+            <DialogClose render={<Button variant="outline" />}>
+              Cancel
             </DialogClose>
             <Button variant="destructive" formAction={onSubmit} type="submit">
               {isLoading ? <Loader2 className="animate-spin" /> : "Delete"}

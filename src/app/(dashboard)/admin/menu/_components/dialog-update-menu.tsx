@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { startTransition, useActionState, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { updateMenu } from "../action";
+import { updateMenu } from "../actions";
 import { toast } from "sonner";
 import { Preview } from "@/types/general";
 import { Dialog } from "@/components/ui/dialog";

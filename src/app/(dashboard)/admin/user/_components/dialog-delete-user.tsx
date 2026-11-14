@@ -1,7 +1,7 @@
 import DialogDelete from "@/components/common/dialog-delete";
 import { profile } from "@/types/auth";
 import { startTransition, useActionState, useEffect } from "react";
-import { deleteUser } from "../action";
+import { deleteUser } from "../actions";
 import { INITIAL_STATE_ACTION } from "@/constants/general-constant";
 import { toast } from "sonner";
 

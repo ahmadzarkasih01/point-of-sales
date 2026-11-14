@@ -2,7 +2,7 @@ import DialogDelete from "@/components/common/dialog-delete";
 import { startTransition, useActionState, useEffect } from "react";
 import { INITIAL_STATE_ACTION } from "@/constants/general-constant";
 import { toast } from "sonner";
-import { deleteMenu } from "../action";
+import { deleteMenu } from "../actions";
 import { Menu } from "@/validations/menu-validation";
 
 export default function DialogDeleteMenu({

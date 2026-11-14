@@ -7,6 +7,7 @@ import {
 } from "../ui/dropdown-menu";
 import { Button } from "../ui/button";
 import { EllipsisVertical } from "lucide-react";
+import Link from "next/link";
 
 export default function DropdownAction({
   menu,
@@ -16,18 +17,21 @@ export default function DropdownAction({
     variant?: "destructive" | "default";
     action?: () => void;
     type?: "button" | "link";
+    href?: string;
   }[];
 }) {
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button
-          variant="ghost"
-          className="text-muted-foreground size-8"
-          size="icon"
-        >
-          <EllipsisVertical />
-        </Button>
+      <DropdownMenuTrigger
+        render={
+          <Button
+            variant="outline"
+            className="text-muted-foreground size-8"
+            size="icon"
+          />
+        }
+      >
+        <EllipsisVertical />
       </DropdownMenuTrigger>
 
       <DropdownMenuContent align="end" className="w-32">
@@ -35,8 +39,12 @@ export default function DropdownAction({
           <DropdownMenuItem
             key={`dropdown-action-${index}`}
             variant={item.variant || "default"}
-            asChild={item.type === "link"}
             onClick={item.action}
+            render={
+              item.type === "link" && item.href ? (
+                <Link href={item.href} />
+              ) : undefined
+            }
           >
             {item.label}
           </DropdownMenuItem>

@@ -5,7 +5,6 @@ import DropdownAction from "@/components/common/dropdown-action";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { HEADER_TABLE_USER } from "@/constants/user-constant";
 import useDataTable from "@/hooks/use-data-table";
 import { createClient } from "@/lib/supabase/client";
 import { useQuery } from "@tanstack/react-query";
@@ -30,6 +29,7 @@ export default function MenuManagement() {
     handleChangeLimit,
     handleChangeSearch,
   } = useDataTable();
+
   const {
     data: menus,
     isLoading,
@@ -106,7 +106,7 @@ export default function MenuManagement() {
           menu={[
             {
               label: (
-                <span className="flex item-center gap-2">
+                <span className="flex items-center gap-2">
                   <Pencil />
                   Edit
                 </span>
@@ -120,7 +120,7 @@ export default function MenuManagement() {
             },
             {
               label: (
-                <span className="flex item-center gap-2">
+                <span className="flex items-center gap-2">
                   <Trash2 className="text-red-400" />
                   Delete
                 </span>
@@ -151,12 +151,12 @@ export default function MenuManagement() {
         <h1 className="text-2xl font-bold">Menu Management</h1>
         <div className="flex gap-2">
           <Input
-            placeholder="Search by name or category"
+            placeholder="Search..."
             onChange={(e) => handleChangeSearch(e.target.value)}
           />
           <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
-            <DialogTrigger asChild>
-              <Button variant="outline">Create</Button>
+            <DialogTrigger render={<Button variant="outline" />}>
+              Create
             </DialogTrigger>
             <DialogCreateMenu
               refetch={refetch}

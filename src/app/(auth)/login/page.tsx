@@ -1,6 +1,6 @@
 import Login from "./_components/login";
 
-export const metaData = {
+export const metadata = {
   title: "WPU CAFE | Login",
 };
 

@@ -1,9 +1,9 @@
-import { Button } from "@/components/ui/button";
+import Dashboard from "./_components/dashboard";
 
-export default function AdminDashboardPage() {
-  return (
-    <div>
-      <Button>Dashboard</Button>
-    </div>
-  );
+export const metadata = {
+  title: "WPU Cafe | Dashboard",
+};
+
+export default function DashboardPage() {
+  return <Dashboard />;
 }
